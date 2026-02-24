@@ -1857,19 +1857,40 @@ body::-webkit-scrollbar { display: none; }
 }
 
 /* ══════════════════════════════════════════════════════════
-   SLIDE 7 — GLOBAL CAPITAL ROTATION
+   SLIDE 7 — GLOBAL CAPITAL ROTATION (v16)
    ══════════════════════════════════════════════════════════ */
+
+/* Background flow element */
+.gcr-flow-bg {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Layout */
 .gcr-layout {
   display: grid;
   grid-template-columns: 3fr 2fr;
-  gap: 32px;
+  gap: 28px;
   flex: none;
+  position: relative;
+  z-index: 1;
 }
+
+/* ── Chart container ── */
 .gcr-chart-wrap {
-  background: var(--cream);
-  border-radius: 16px;
-  padding: 24px 28px 18px;
+  background: var(--white);
+  border-radius: 18px;
+  padding: 22px 24px 16px;
   border: 1px solid var(--border-light);
+  box-shadow: 0 8px 32px rgba(107,10,20,0.06), 0 2px 8px rgba(0,0,0,0.02);
+  opacity: 0;
+  transform: translateY(20px);
+}
+.slide.active .gcr-chart-wrap {
+  animation: gcr-fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.15s forwards;
 }
 .gcr-chart-title {
   font-size: 9px;
@@ -1877,72 +1898,129 @@ body::-webkit-scrollbar { display: none; }
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
+
+/* Chart body with gridlines */
 .gcr-chart-body {
   display: flex;
   align-items: flex-end;
-  gap: 28px;
-  height: 180px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--border-light);
+  justify-content: space-around;
+  height: 230px;
+  padding: 30px 8px 0;
+  border-bottom: 1px solid var(--border-medium);
+  position: relative;
+  background-image: linear-gradient(to bottom, rgba(36,24,24,0.035) 1px, transparent 1px);
+  background-size: 100% 25%;
+  background-position: top;
 }
+
+/* Clusters */
 .gcr-cluster {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
+  flex: 1;
+  position: relative;
 }
+
+/* Arrow zone (above bars) */
+.gcr-arrow-zone {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 88px;
+  margin-bottom: 4px;
+}
+.gcr-arrow { overflow: visible; }
+.gcr-arrow-path {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  stroke-linecap: round;
+}
+.slide.active .gcr-cluster:nth-child(1) .gcr-arrow-path { animation: gcr-drawLine 0.6s ease 0.95s forwards; }
+.slide.active .gcr-cluster:nth-child(2) .gcr-arrow-path { animation: gcr-drawLine 0.6s ease 1.1s forwards; }
+.slide.active .gcr-cluster:nth-child(3) .gcr-arrow-path { animation: gcr-drawLine 0.6s ease 1.25s forwards; }
+.gcr-arrow-label {
+  position: absolute;
+  top: 2px;
+  right: -2px;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'Gelasio', Georgia, serif;
+  opacity: 0;
+  white-space: nowrap;
+}
+.gcr-arrow-label-up { color: var(--maroon); }
+.gcr-arrow-label-down { color: var(--text-muted); }
+.slide.active .gcr-cluster:nth-child(1) .gcr-arrow-label { animation: gcr-fadeIn 0.3s ease 1.3s forwards; }
+.slide.active .gcr-cluster:nth-child(2) .gcr-arrow-label { animation: gcr-fadeIn 0.3s ease 1.45s forwards; }
+.slide.active .gcr-cluster:nth-child(3) .gcr-arrow-label { animation: gcr-fadeIn 0.3s ease 1.6s forwards; }
+
+/* Bars */
 .gcr-bars {
   display: flex;
   align-items: flex-end;
-  gap: 6px;
-  height: 150px;
+  gap: 8px;
+  height: 145px;
+  position: relative;
 }
 .gcr-bar {
-  width: 28px;
-  border-radius: 4px 4px 0 0;
+  width: 32px;
+  border-radius: 6px 6px 2px 2px;
   position: relative;
-  transition: transform 0.2s ease;
+  transition: filter 0.25s ease;
+  transform: scaleY(0);
+  transform-origin: bottom;
 }
-.gcr-bar:hover { transform: scaleY(1.03); }
+.gcr-bar:hover { filter: brightness(1.15); }
 .gcr-bar-val {
   position: absolute;
   top: -18px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   font-family: 'Gelasio', Georgia, serif;
   color: var(--text-primary);
   white-space: nowrap;
 }
-.gcr-bar-old {
-  background: rgba(107, 10, 20, 0.15);
+.gcr-bar-old { background: rgba(107,10,20,0.13); }
+.gcr-bar-new { background: var(--maroon); }
+.slide.active .gcr-cluster:nth-child(1) .gcr-bar { animation: gcr-growBar 0.65s cubic-bezier(0.22,1,0.36,1) 0.4s forwards; }
+.slide.active .gcr-cluster:nth-child(2) .gcr-bar { animation: gcr-growBar 0.65s cubic-bezier(0.22,1,0.36,1) 0.55s forwards; }
+.slide.active .gcr-cluster:nth-child(3) .gcr-bar { animation: gcr-growBar 0.65s cubic-bezier(0.22,1,0.36,1) 0.7s forwards; }
+
+/* Country labels + flags */
+.gcr-cluster-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
 }
-.gcr-bar-new {
-  background: var(--maroon);
+.gcr-flag {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid var(--border-light);
 }
+.gcr-flag svg { width: 100%; height: 100%; display: block; }
 .gcr-cluster-label {
   font-size: 10px;
   font-weight: 500;
   color: var(--text-primary);
-  margin-top: 8px;
-  text-align: center;
 }
-.gcr-cluster-delta {
-  font-size: 9px;
-  font-weight: 500;
-  font-family: 'Gelasio', Georgia, serif;
-  color: var(--maroon);
-  margin-top: 2px;
-}
+
+/* Legend */
 .gcr-chart-legend {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-top: 12px;
+  margin-top: 10px;
 }
 .gcr-legend-item {
   display: flex;
@@ -1955,7 +2033,7 @@ body::-webkit-scrollbar { display: none; }
 .gcr-legend-swatch {
   width: 10px;
   height: 10px;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 .gcr-chart-footnote {
   font-size: 8px;
@@ -1964,30 +2042,40 @@ body::-webkit-scrollbar { display: none; }
   margin-top: 8px;
   line-height: 1.5;
 }
+
+/* ── GP commitment tiles ── */
 .gcr-tiles {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 .gcr-tile {
-  padding: 14px 18px;
+  padding: 14px 18px 14px 16px;
   border-radius: 14px;
   border: 1px solid var(--border-light);
+  border-left: 3px solid var(--maroon);
   background: var(--cream);
-  transition: all 0.25s ease;
+  opacity: 0;
+  transform: translateX(24px);
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .gcr-tile:hover {
-  background: rgba(107, 10, 20, 0.04);
-  border-color: rgba(107, 10, 20, 0.12);
-  box-shadow: 0 4px 16px rgba(107, 10, 20, 0.06);
+  background: rgba(107,10,20,0.04);
+  border-color: rgba(107,10,20,0.15);
+  border-left-color: var(--maroon);
+  box-shadow: 0 6px 20px rgba(107,10,20,0.07);
 }
+.slide.active .gcr-tile:nth-child(1) { animation: gcr-slideRight 0.5s cubic-bezier(0.22,1,0.36,1) 0.35s forwards; }
+.slide.active .gcr-tile:nth-child(2) { animation: gcr-slideRight 0.5s cubic-bezier(0.22,1,0.36,1) 0.45s forwards; }
+.slide.active .gcr-tile:nth-child(3) { animation: gcr-slideRight 0.5s cubic-bezier(0.22,1,0.36,1) 0.55s forwards; }
+.slide.active .gcr-tile:nth-child(4) { animation: gcr-slideRight 0.5s cubic-bezier(0.22,1,0.36,1) 0.65s forwards; }
 .gcr-tile-name {
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 .gcr-tile-num {
   font-size: 20px;
@@ -2000,18 +2088,20 @@ body::-webkit-scrollbar { display: none; }
   font-size: 9px;
   font-weight: 300;
   color: var(--text-secondary);
-  margin-top: 3px;
+  margin-top: 2px;
   line-height: 1.4;
 }
-.gcr-macro-strip {
-  display: flex;
+
+/* ── Macro pill ── */
+.gcr-macro-pill {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
-  border-radius: 14px;
-  border: 1px solid var(--border-light);
-  background: var(--cream);
-  margin-top: 16px;
+  gap: 14px;
+  padding: 10px 24px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(107,10,20,0.03), rgba(107,10,20,0.06));
+  border: 1px solid rgba(107,10,20,0.08);
+  margin-top: 14px;
   flex: none;
 }
 .gcr-macro-label {
@@ -2021,6 +2111,11 @@ body::-webkit-scrollbar { display: none; }
   text-transform: uppercase;
   color: var(--maroon);
   white-space: nowrap;
+}
+.gcr-macro-sep {
+  width: 1px;
+  height: 22px;
+  background: rgba(107,10,20,0.12);
 }
 .gcr-macro-val {
   font-size: 13px;
@@ -2033,14 +2128,51 @@ body::-webkit-scrollbar { display: none; }
   font-weight: 300;
   color: var(--text-secondary);
 }
-.gcr-takeaway {
-  text-align: center;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-primary);
-  margin-top: 14px;
-  line-height: 1.55;
+.gcr-yoy-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  color: #138808;
+}
+.gcr-yoy-badge svg { flex-shrink: 0; }
+
+/* ── Pull-quote takeaway ── */
+.gcr-pullquote {
+  margin-top: 12px;
   flex: none;
+}
+.gcr-pullquote-text {
+  font-size: 11.5px;
+  font-weight: 400;
+  font-style: italic;
+  font-family: 'Gelasio', Georgia, serif;
+  color: var(--text-primary);
+  line-height: 1.55;
+  border-left: 3px solid var(--maroon);
+  padding-left: 14px;
+}
+
+/* ── Keyframes ── */
+@keyframes gcr-fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes gcr-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes gcr-growBar {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes gcr-drawLine {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes gcr-slideRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @media print {
@@ -2793,6 +2925,25 @@ body::-webkit-scrollbar { display: none; }
 <!-- ── SLIDE 7: I-6 GLOBAL CAPITAL ROTATION ── -->
 <div class="slide slide-light" data-bg="light">
   <div class="accent-bar"></div><div class="top-line"></div>
+
+  <!-- Background flow element: subtle directional sweep (China → India) -->
+  <svg class="gcr-flow-bg" viewBox="0 0 1200 810" preserveAspectRatio="none">
+    <path d="M 1150 200 Q 800 120 450 350 Q 200 500 50 380" stroke="rgba(107,10,20,0.025)" stroke-width="140" fill="none" stroke-linecap="round"/>
+    <path d="M 1100 280 Q 750 180 350 380 Q 150 480 30 400" stroke="rgba(107,10,20,0.015)" stroke-width="80" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <!-- Hidden SVG defs for arrow markers -->
+  <svg width="0" height="0" style="position:absolute;">
+    <defs>
+      <marker id="gcr-ah-up" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <path d="M0,0.5 L5,3.5 L0,6.5" fill="none" stroke="#6B0A14" stroke-width="1.2"/>
+      </marker>
+      <marker id="gcr-ah-down" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <path d="M0,0.5 L5,3.5 L0,6.5" fill="none" stroke="rgba(36,24,24,0.3)" stroke-width="1.2"/>
+      </marker>
+    </defs>
+  </svg>
+
   <div class="slide-header animate-in stagger-1">
     <h2>Global Capital Rotation <span>Toward India</span></h2>
     <div class="sub">The world's largest GPs are doubling their India allocations</div>
@@ -2800,60 +2951,76 @@ body::-webkit-scrollbar { display: none; }
   <div class="header-divider"></div>
 
   <!-- ── 60/40 GRID: Hero chart + GP tiles ── -->
-  <div class="gcr-layout animate-in stagger-2">
+  <div class="gcr-layout">
 
     <!-- ── LEFT: Clustered bar chart ── -->
     <div class="gcr-chart-wrap">
       <div class="gcr-chart-title">$100M+ deals by leading global managers: 2014-18 avg vs 2024</div>
       <div class="gcr-chart-body">
+
         <!-- India cluster -->
         <div class="gcr-cluster">
-          <div class="gcr-bars">
-            <div class="gcr-bar gcr-bar-old" style="height:53%;">
-              <div class="gcr-bar-val">8</div>
-            </div>
-            <div class="gcr-bar gcr-bar-new" style="height:100%;">
-              <div class="gcr-bar-val">15</div>
-            </div>
+          <div class="gcr-arrow-zone">
+            <svg class="gcr-arrow" width="76" height="36" viewBox="0 0 76 36">
+              <path class="gcr-arrow-path" d="M 8 30 C 20 8, 50 2, 62 10" stroke="#6B0A14" stroke-width="1.5" fill="none" marker-end="url(#gcr-ah-up)"/>
+            </svg>
+            <span class="gcr-arrow-label gcr-arrow-label-up">1.9x</span>
           </div>
-          <div class="gcr-cluster-label">India</div>
-          <div class="gcr-cluster-delta">1.9x</div>
+          <div class="gcr-bars">
+            <div class="gcr-bar gcr-bar-old" style="height:53%;"><div class="gcr-bar-val">8</div></div>
+            <div class="gcr-bar gcr-bar-new" style="height:100%;"><div class="gcr-bar-val">15</div></div>
+          </div>
+          <div class="gcr-cluster-info">
+            <div class="gcr-flag"><svg viewBox="0 0 16 16"><rect y="0" width="16" height="5.3" fill="#FF9933"/><rect y="5.3" width="16" height="5.4" fill="#fff"/><rect y="10.7" width="16" height="5.3" fill="#138808"/><circle cx="8" cy="8" r="1.5" fill="none" stroke="#000080" stroke-width="0.4"/></svg></div>
+            <div class="gcr-cluster-label">India</div>
+          </div>
         </div>
+
         <!-- Japan cluster -->
         <div class="gcr-cluster">
-          <div class="gcr-bars">
-            <div class="gcr-bar gcr-bar-old" style="height:27%;">
-              <div class="gcr-bar-val">4</div>
-            </div>
-            <div class="gcr-bar gcr-bar-new" style="height:47%;">
-              <div class="gcr-bar-val">7</div>
-            </div>
+          <div class="gcr-arrow-zone">
+            <svg class="gcr-arrow" width="76" height="36" viewBox="0 0 76 36">
+              <path class="gcr-arrow-path" d="M 8 28 C 20 10, 50 6, 62 14" stroke="#6B0A14" stroke-width="1.5" fill="none" marker-end="url(#gcr-ah-up)"/>
+            </svg>
+            <span class="gcr-arrow-label gcr-arrow-label-up">1.8x</span>
           </div>
-          <div class="gcr-cluster-label">Japan</div>
-          <div class="gcr-cluster-delta">1.8x</div>
+          <div class="gcr-bars">
+            <div class="gcr-bar gcr-bar-old" style="height:27%;"><div class="gcr-bar-val">4</div></div>
+            <div class="gcr-bar gcr-bar-new" style="height:47%;"><div class="gcr-bar-val">7</div></div>
+          </div>
+          <div class="gcr-cluster-info">
+            <div class="gcr-flag"><svg viewBox="0 0 16 16"><rect width="16" height="16" fill="#fff"/><circle cx="8" cy="8" r="3" fill="#BC002D"/></svg></div>
+            <div class="gcr-cluster-label">Japan</div>
+          </div>
         </div>
+
         <!-- Greater China cluster -->
         <div class="gcr-cluster">
-          <div class="gcr-bars">
-            <div class="gcr-bar gcr-bar-old" style="height:73%;">
-              <div class="gcr-bar-val">11</div>
-            </div>
-            <div class="gcr-bar gcr-bar-new" style="height:20%;">
-              <div class="gcr-bar-val">3</div>
-            </div>
+          <div class="gcr-arrow-zone">
+            <svg class="gcr-arrow" width="76" height="36" viewBox="0 0 76 36">
+              <path class="gcr-arrow-path" d="M 8 8 C 20 28, 50 32, 62 24" stroke="rgba(36,24,24,0.3)" stroke-width="1.5" fill="none" marker-end="url(#gcr-ah-down)"/>
+            </svg>
+            <span class="gcr-arrow-label gcr-arrow-label-down">-73%</span>
           </div>
-          <div class="gcr-cluster-label">Greater China</div>
-          <div class="gcr-cluster-delta">-73%</div>
+          <div class="gcr-bars">
+            <div class="gcr-bar gcr-bar-old" style="height:73%;"><div class="gcr-bar-val">11</div></div>
+            <div class="gcr-bar gcr-bar-new" style="height:20%;"><div class="gcr-bar-val">3</div></div>
+          </div>
+          <div class="gcr-cluster-info">
+            <div class="gcr-flag"><svg viewBox="0 0 16 16"><rect width="16" height="16" fill="#DE2910"/><polygon points="4,2.5 4.5,3.8 5.9,3.8 4.7,4.7 5.2,6 4,5.1 2.8,6 3.3,4.7 2.1,3.8 3.5,3.8" fill="#FFDE00"/></svg></div>
+            <div class="gcr-cluster-label">Greater China</div>
+          </div>
         </div>
+
       </div>
       <!-- Legend -->
       <div class="gcr-chart-legend">
         <div class="gcr-legend-item">
-          <div class="gcr-legend-swatch" style="background:rgba(107,10,20,0.15);"></div>
+          <div class="gcr-legend-swatch" style="background:rgba(107,10,20,0.13);"></div>
           2014-18 avg
         </div>
         <div class="gcr-legend-item">
-          <div class="gcr-legend-swatch" style="background:var(--maroon);"></div>
+          <div class="gcr-legend-swatch" style="background:#6B0A14;"></div>
           2024
         </div>
       </div>
@@ -2861,7 +3028,7 @@ body::-webkit-scrollbar { display: none; }
     </div>
 
     <!-- ── RIGHT: GP commitment tiles ── -->
-    <div class="gcr-tiles animate-in stagger-3">
+    <div class="gcr-tiles">
       <div class="gcr-tile">
         <div class="gcr-tile-name">Carlyle</div>
         <div class="gcr-tile-num">~30-35%</div>
@@ -2885,22 +3052,27 @@ body::-webkit-scrollbar { display: none; }
     </div>
   </div>
 
-  <!-- ── MACRO STRIP ── -->
-  <div class="gcr-macro-strip animate-in stagger-4">
+  <!-- ── MACRO PILL ── -->
+  <div class="gcr-macro-pill animate-in stagger-4">
     <div class="gcr-macro-label">FDI Equity Inflows</div>
-    <div style="width:1px;height:24px;background:var(--border-light);"></div>
+    <div class="gcr-macro-sep"></div>
     <div>
       <div class="gcr-macro-val">$50.0B <span style="font-size:9px;font-weight:300;color:var(--text-muted);font-family:'Inter',sans-serif;">(FY25)</span></div>
     </div>
-    <div style="width:1px;height:24px;background:var(--border-light);"></div>
+    <div class="gcr-macro-sep"></div>
     <div>
       <div class="gcr-macro-val">$35.18B <span style="font-size:9px;font-weight:300;color:var(--text-muted);font-family:'Inter',sans-serif;">(Apr-Sep FY26)</span></div>
-      <div class="gcr-macro-sub">+18% YoY</div>
+      <div class="gcr-yoy-badge">
+        <svg width="10" height="10" viewBox="0 0 10 10"><path d="M5 8V3M5 3L2.5 5.5M5 3L7.5 5.5" stroke="#138808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        +18% YoY
+      </div>
     </div>
   </div>
 
-  <!-- ── TAKEAWAY ── -->
-  <div class="gcr-takeaway animate-in stagger-5">As global capital concentrates in India, access + selection discipline become the key edge.</div>
+  <!-- ── PULL-QUOTE TAKEAWAY ── -->
+  <div class="gcr-pullquote animate-in stagger-5">
+    <div class="gcr-pullquote-text">As global capital concentrates in India, access + selection discipline become the key edge.</div>
+  </div>
 
   <div class="source-note animate-in stagger-6">Sources: Bain APAC PE Report 2025, Preqin, Deloitte APAC PE Almanac 2025</div>
   <div class="slide-footer"><span>February 2026</span><div class="sep"></div><span>For Qualified Investors Only</span><div class="sep"></div><span>lanmea.com</span></div>
